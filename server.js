@@ -28,7 +28,10 @@ app.get("/api/db-health", async (req, res) => {
     await pool.query("SELECT 1");
     res.json({ database: "connected" });
   } catch (error) {
-    console.error("Database connection test failed:", error.code || error.message);
+    console.error(
+      "Database connection test failed:",
+      error.code || error.message
+    );
     res.status(503).json({ database: "disconnected" });
   }
 });
