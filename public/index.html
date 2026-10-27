@@ -304,20 +304,61 @@
         sections.forEach((section) => observer.observe(section));
 
         // Demo contact form
-        document.getElementById("contactForm").addEventListener(
-            "submit",
-            function (event) {
-                event.preventDefault();
+       
+const contactForm = document.getElementById("contactForm");
+const contactResult = document.getElementById("contactResult");
 
-                const name = document.getElementById("name").value.trim();
+contactForm.addEventListener("submit", async function (event) {
+    event.preventDefault();
 
-                document.getElementById("contactResult").textContent =
-                    "Thank you, " + name +
-                    "! This is a demo form. No message was sent.";
+    const name = document.getElementById("name").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const message = document.getElementById("message").value.trim();
 
-                this.reset();
+    const submitButton = contactForm.querySelector(
+        'button[type="submit"]'
+    );
+
+    submitButton.disabled = true;
+    contactResult.textContent = "Sending your message...";
+
+    try {
+        const response = await fetch(
+            "http://localhost:3000/api/contacts",
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    name: name,
+                    email: email,
+                    message: message
+                })
             }
         );
+
+        const result = await response.json();
+
+        if (!response.ok) {
+            throw new Error(result.message || "Unable to send message.");
+        }
+
+        contactResult.textContent =
+            "Thank you, " + name + "! Your message was sent successfully.";
+
+        contactForm.reset();
+
+    } catch (error) {
+        console.error("Contact form error:", error);
+
+        contactResult.textContent =
+            "Sorry, your message could not be sent. Please try again.";
+    } finally {
+        submitButton.disabled = false;
+    }
+});
+
     </script>
 
 </body>
