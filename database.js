@@ -1,5 +1,8 @@
-﻿
-const mysql = require("mysql2/promise");
+﻿const mysql = require("mysql2/promise");
+
+const caCertificate = process.env.DB_SSL_CA
+  ?.replace(/\\n/g, "\n")
+  .trim();
 
 const pool = mysql.createPool({
   host: process.env.DB_HOST,
@@ -9,7 +12,7 @@ const pool = mysql.createPool({
   database: process.env.DB_NAME,
 
   ssl: {
-    ca: process.env.DB_SSL_CA,
+    ca: caCertificate,
     rejectUnauthorized: true
   },
 
