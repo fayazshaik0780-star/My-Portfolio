@@ -8,8 +8,8 @@ const pool = mysql.createPool({
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
 
-  // Secure the connection to Aiven with TLS.
   ssl: {
+    ca: process.env.DB_SSL_CA,
     rejectUnauthorized: true
   },
 
