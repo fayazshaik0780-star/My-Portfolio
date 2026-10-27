@@ -23,6 +23,17 @@ app.get("/api/health", (req, res) => {
   res.json({ message: "Portfolio backend is running!" });
 });
 
+app.get("/api/db-health", async (req, res) => {
+  try {
+    await pool.query("SELECT 1");
+    res.json({ database: "connected" });
+  } catch (error) {
+    console.error("Database connection test failed:", error.code || error.message);
+    res.status(503).json({ database: "disconnected" });
+  }
+});
+
+
 // Save contact form submissions
 app.post("/api/contacts", async (req, res) => {
   try {
