@@ -303,8 +303,6 @@
 
         sections.forEach((section) => observer.observe(section));
 
-        // Demo contact form
-       
 const contactForm = document.getElementById("contactForm");
 const contactResult = document.getElementById("contactResult");
 
@@ -323,20 +321,13 @@ contactForm.addEventListener("submit", async function (event) {
     contactResult.textContent = "Sending your message...";
 
     try {
-        const response = await fetch(
-            "https://my-portfolio-ytx6.onrender.com/api/contacts", 
-            {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    name: name,
-                    email: email,
-                    message: message
-                })
-            }
-        );
+        const response = await fetch("/api/contacts", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ name, email, message })
+        });
 
         const result = await response.json();
 
@@ -352,8 +343,10 @@ contactForm.addEventListener("submit", async function (event) {
     } catch (error) {
         console.error("Contact form error:", error);
 
-        contactResult.textContent =
-            "Sorry, your message could not be sent. Please try again.";
+        contactResult.textContent = error instanceof Error
+            ? error.message
+            : "Sorry, your message could not be sent. Please try again.";
+        contactResult.classList.add("is-error");
     } finally {
         submitButton.disabled = false;
     }
@@ -363,5 +356,4 @@ contactForm.addEventListener("submit", async function (event) {
 
 </body>
 </html>
-
 

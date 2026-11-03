@@ -1,6 +1,8 @@
 
 const express = require("express");
 const cors = require("cors");
+const path = require("path");
+const nodemailer = require("nodemailer");
 require("dotenv").config();
 
 const pool = require("./database");
@@ -17,6 +19,7 @@ app.use(cors({
 }));
 
 app.use(express.json());
+app.use(express.static(path.join(__dirname, "public")));
 
 // Test route
 app.get("/api/health", (req, res) => {
@@ -46,7 +49,14 @@ app.get("/api/db-health", async (req, res) => {
 // Save contact form submissions
 app.post("/api/contacts", async (req, res) => {
   try {
-    const { name, email, message } = req.body;
+    const body = req.body;
+    if (!body || typeof body !== "object" || Array.isArray(body)) {
+      return res.status(400).json({
+        message: "Please provide your name, email, and message."
+      });
+    }
+
+    const { name, email, message } = body;
 
     if (
       typeof name !== "string" ||
@@ -71,26 +81,68 @@ app.post("/api/contacts", async (req, res) => {
       });
     }
 
-    const sql = `
-      INSERT INTO contacts (name, email, message)
-      VALUES (?, ?, ?)
-    `;
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
+      return res.status(400).json({
+        message: "Please provide a valid email address."
+      });
+    }
 
-    const [result] = await pool.execute(sql, [
-      name.trim(),
-      email.trim(),
-      message.trim()
-    ]);
+    const smtpHost = process.env.SMTP_HOST?.trim();
+    const smtpUser = process.env.SMTP_USER?.trim();
+    const smtpPassword = process.env.SMTP_PASS?.replace(/\s/g, "");
+    const smtpPort = Number(process.env.SMTP_PORT || 465);
+    const recipient = process.env.MAIL_TO?.trim() || smtpUser;
 
-    res.status(201).json({
-      message: "Your message was saved successfully!",
-      id: result.insertId
+    if (
+      !smtpHost ||
+      !smtpUser ||
+      !smtpPassword ||
+      !Number.isInteger(smtpPort) ||
+      smtpPort < 1 ||
+      smtpPort > 65535 ||
+      !recipient
+    ) {
+      return res.status(503).json({
+        message: "Email delivery is not configured. Check SMTP settings in the private .env file."
+      });
+    }
+
+    const transporter = nodemailer.createTransport({
+      host: smtpHost,
+      port: smtpPort,
+      secure: smtpPort === 465,
+      auth: {
+        user: smtpUser,
+        pass: smtpPassword
+      },
+      connectionTimeout: 10000,
+      greetingTimeout: 10000,
+      socketTimeout: 20000
     });
+
+    await transporter.sendMail({
+      from: smtpUser,
+      to: recipient,
+      replyTo: email.trim(),
+      subject: "New portfolio contact message",
+      text: `Name: ${name.trim()}\nEmail: ${email.trim()}\n\nMessage:\n${message.trim()}`
+    });
+
+    res.status(201).json({ message: "Your message was sent successfully." });
   } catch (error) {
-    console.error("Contact API error:", error.message);
+    console.error("Contact email error:", {
+      code: error.code || "UNKNOWN",
+      responseCode: error.responseCode
+    });
+
+    if (error.code === "EAUTH") {
+      return res.status(503).json({
+        message: "The mail provider rejected the SMTP login. Check SMTP_USER and use a valid App Password in .env."
+      });
+    }
 
     res.status(500).json({
-      message: "Unable to save your message right now."
+      message: "Unable to send your message right now."
     });
   }
 });
