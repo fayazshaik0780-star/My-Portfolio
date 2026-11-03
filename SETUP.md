@@ -29,5 +29,6 @@ The contact form submits to `POST /api/contacts`. The API validates each message
 The site is published from `public/`; Netlify routes `POST /api/contacts` to the serverless function in `netlify/functions`.
 
 1. Import the `fayazshaik0780-star/My-Portfolio` repository in Netlify and deploy the `main` branch. Netlify reads the build and function settings from `netlify.toml`.
-2. In the Netlify site's environment variables, add `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, and `MAIL_TO`. Use the same values as your private local `.env`; never commit or paste the App Password into the repository.
-3. Trigger a new deploy after adding the variables. Submit a test message from the deployed site and confirm it arrives in the configured inbox.
+2. In the Netlify project's environment variables, add `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, and `MAIL_TO`. Use the same values as your private local `.env`; enter the App Password only in Netlify's secure settings, never in the repository or chat.
+3. New Netlify projects may be private by default. In **Project configuration → General → Project visibility**, make production visibility public so visitors can open the site. Deploy previews can remain private.
+4. Trigger a new deploy after adding the variables. Submit a test message from the deployed site and confirm it arrives in the configured inbox.
