@@ -23,3 +23,11 @@ npm.cmd start
 Open `http://localhost:3000`. Express serves the portfolio and contact API from the same origin.
 
 The contact form submits to `POST /api/contacts`. The API validates each message and emails it to your inbox; it does not save messages to a database.
+
+## Deploy to Netlify
+
+The site is published from `public/`; Netlify routes `POST /api/contacts` to the serverless function in `netlify/functions`.
+
+1. Import the `fayazshaik0780-star/My-Portfolio` repository in Netlify and deploy the `main` branch. Netlify reads the build and function settings from `netlify.toml`.
+2. In the Netlify site's environment variables, add `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, and `MAIL_TO`. Use the same values as your private local `.env`; never commit or paste the App Password into the repository.
+3. Trigger a new deploy after adding the variables. Submit a test message from the deployed site and confirm it arrives in the configured inbox.
