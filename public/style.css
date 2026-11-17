@@ -1,19 +1,44 @@
 
  /* 1. CSS VARIABLES */
         :root {
+            color-scheme: light;
             --primary: #3b82f6;
             --primary-dark: #1d4ed8;
             --accent: #a78bfa;
             --dark: #0f172a;
             --dark-card: #172554;
             --text: #1e293b;
+            --heading: #0f172a;
             --muted: #64748b;
             --light: #f1f5f9;
             --white: #ffffff;
             --border: #dbeafe;
+            --section-bg: #eaf1ff;
+            --input-bg: #f8fafc;
+            --field-border: #cbd5e1;
+            --project-label-bg: #dbeafe;
+            --project-label-text: #1d4ed8;
+            --link-color: #1d4ed8;
             --radius: 16px;
             --shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
             --transition: 0.3s ease;
+        }
+
+        :root[data-theme="dark"] {
+            color-scheme: dark;
+            --text: #e2e8f0;
+            --heading: #f8fafc;
+            --muted: #b6c2d2;
+            --light: #0b1220;
+            --white: #151f31;
+            --border: #2b3b55;
+            --section-bg: #101b2d;
+            --input-bg: #0f172a;
+            --field-border: #40516b;
+            --project-label-bg: #1e3a5f;
+            --project-label-text: #bfdbfe;
+            --link-color: #93c5fd;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.22);
         }
 
         /* 2. RESET */
@@ -67,6 +92,37 @@
             justify-content: space-between;
             align-items: center;
             gap: 20px;
+        }
+
+        .theme-toggle {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            flex-shrink: 0;
+            min-height: 44px;
+            padding: 9px 13px;
+            border: 1px solid #475569;
+            border-radius: 999px;
+            background: #1e293b;
+            color: #f8fafc;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color var(--transition),
+                        border-color var(--transition),
+                        transform var(--transition);
+        }
+
+        .theme-toggle:hover {
+            background: #334155;
+            border-color: #93c5fd;
+            transform: translateY(-2px);
+        }
+
+        .theme-icon {
+            font-size: 17px;
+            line-height: 1;
         }
 
         .logo {
@@ -221,7 +277,7 @@
         .section-title {
             font-size: 30px;
             margin-bottom: 28px;
-            color: var(--dark);
+            color: var(--heading);
         }
 
         .section-title span {
@@ -261,7 +317,7 @@
         }
 
         .card h3 {
-            color: var(--dark);
+            color: var(--heading);
             margin-bottom: 12px;
         }
 
@@ -280,7 +336,7 @@
 
         /* 8. SKILLS */
         .skills-section {
-            background: #eaf1ff;
+            background: var(--section-bg);
         }
 
         .skills-grid {
@@ -318,8 +374,8 @@
 
         .project-label {
             display: inline-block;
-            background: #dbeafe;
-            color: var(--primary-dark);
+            background: var(--project-label-bg);
+            color: var(--project-label-text);
             border-radius: 20px;
             padding: 5px 12px;
             font-size: 13px;
@@ -335,7 +391,7 @@
         }
 
         .contact-info a {
-            color: var(--primary-dark);
+            color: var(--link-color);
             overflow-wrap: anywhere;
         }
 
@@ -353,9 +409,10 @@
         .contact-form textarea {
             width: 100%;
             padding: 12px;
-            border: 1px solid #cbd5e1;
+            border: 1px solid var(--field-border);
             border-radius: 8px;
-            background: #f8fafc;
+            background: var(--input-bg);
+            color: var(--text);
             outline: none;
         }
 
@@ -396,6 +453,10 @@
         @media (max-width: 768px) {
             .navbar {
                 flex-direction: column;
+            }
+
+            .theme-toggle {
+                align-self: center;
             }
 
             .nav-links {
@@ -486,4 +547,3 @@
                 animation-duration: 0.01ms !important;
             }
         }
-

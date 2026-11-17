@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0f172a">
     <meta name="description" content="Shaik Fayaz's portfolio - Electronics and Communication Engineering graduate and aspiring software engineer.">
     <title>Shaik Fayaz | Portfolio</title>
 
@@ -25,6 +26,16 @@
                 <li><a href="#projects">Projects</a></li>
                 <li><a href="#contact">Contact</a></li>
             </ul>
+
+            <button
+                class="theme-toggle"
+                type="button"
+                aria-label="Switch to dark theme"
+                aria-pressed="false"
+            >
+                <span class="theme-icon" aria-hidden="true">☾</span>
+                <span class="theme-label">Dark mode</span>
+            </button>
         </nav>
     </header>
 
@@ -303,6 +314,46 @@
 
         sections.forEach((section) => observer.observe(section));
 
+        const themeToggle = document.querySelector(".theme-toggle");
+        const themeLabel = themeToggle.querySelector(".theme-label");
+        const themeIcon = themeToggle.querySelector(".theme-icon");
+        const themeColor = document.querySelector('meta[name="theme-color"]');
+
+        function applyTheme(theme) {
+            const isDark = theme === "dark";
+            document.documentElement.dataset.theme = isDark ? "dark" : "light";
+            themeToggle.setAttribute("aria-pressed", String(isDark));
+            themeToggle.setAttribute(
+                "aria-label",
+                `Switch to ${isDark ? "light" : "dark"} theme`
+            );
+            themeLabel.textContent = isDark ? "Light mode" : "Dark mode";
+            themeIcon.textContent = isDark ? "☀" : "☾";
+            themeColor.setAttribute("content", isDark ? "#0b1220" : "#0f172a");
+        }
+
+        let savedTheme;
+        try {
+            savedTheme = localStorage.getItem("portfolio-theme");
+        } catch (error) {
+            console.warn("Could not read the saved theme preference.", error);
+        }
+
+        applyTheme(savedTheme === "dark" ? "dark" : "light");
+
+        themeToggle.addEventListener("click", () => {
+            const nextTheme = document.documentElement.dataset.theme === "dark"
+                ? "light"
+                : "dark";
+            applyTheme(nextTheme);
+
+            try {
+                localStorage.setItem("portfolio-theme", nextTheme);
+            } catch (error) {
+                console.warn("Could not save the theme preference.", error);
+            }
+        });
+
 const contactForm = document.getElementById("contactForm");
 const contactResult = document.getElementById("contactResult");
 
@@ -356,4 +407,3 @@ contactForm.addEventListener("submit", async function (event) {
 
 </body>
 </html>
-
